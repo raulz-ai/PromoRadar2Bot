@@ -1,36 +1,24 @@
 import os
-import time
-import requests
+from telegram import Bot
 from amazon_ofertas import buscar_ofertas_amazon
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
-AFILIADO = "promoradar0cb-20"  # seu ID fixo
+AMAZON_TAG = os.getenv("AMAZON_TAG")
 
-def enviar(msg):
-    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-    data = {"chat_id": CHAT_ID, "text": msg, "parse_mode": "HTML"}
-    requests.post(url, data=data)
+bot = Bot(TOKEN)
 
 def main():
-    enviar("🤖 PromoRadar2Bot Iniciado!")
+    oferta = buscar_ofertas_amazon(AMAZON_TAG)
 
-    while True:
-        ofertas = buscar_ofertas_amazon("smartphone", AFILIADO)
+    mensagem = (
+        f"🔥 *Oferta do dia!*\n\n"
+        f"📱 *{oferta['nome']}*\n"
+        f"💸 Preço: R${oferta['preco']}\n\n"
+        f"👉 Link: {oferta['link']}"
+    )
 
-        if not ofertas:
-            enviar("⚠️ Nenhuma oferta encontrada na Amazon agora.")
-        else:
-            for o in ofertas[:3]:  # manda até 3 promoções por loop
-                mensagem = f"""
-📦 <b>{o['nome']}</b>
-💰 Preço: R$ {o['preco']}
-🏬 Loja: {o['loja']}
-🔗 <a href="{o['link']}">Comprar com desconto</a>
-"""
-                enviar(mensagem)
-
-        time.sleep(1800)  # roda a cada 30 minutos
+    bot.send_message(CHAT_ID, mensagem, parse_mode="Markdown")
 
 if __name__ == "__main__":
     main()
