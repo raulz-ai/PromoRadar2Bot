@@ -1,31 +1,29 @@
-import requests
+import random
 
-def buscar_ofertas_amazon(termo_busca, afiliado_id):
-    url = f"https://api.buscape.com.br/services/search/?q={termo_busca}"
-    resp = requests.get(url, timeout=5)
+# Lista de produtos fixos só para exemplo (Amazon não tem API gratuita)
+produtos = [
+    {
+        "nome": "Smartphone Samsung Galaxy A15",
+        "preco": 789,
+        "link": "https://www.amazon.com.br/dp/B0CRZ4SLR4?tag={TAG}"
+    },
+    {
+        "nome": "Echo Dot 5ª Geração",
+        "preco": 279,
+        "link": "https://www.amazon.com.br/dp/B09B8V1L1N?tag={TAG}"
+    },
+    {
+        "nome": "Fire TV Stick",
+        "preco": 199,
+        "link": "https://www.amazon.com.br/dp/B09B8TBCCS?tag={TAG}"
+    }
+]
 
-    if resp.status_code != 200:
-        return []
+def buscar_ofertas_amazon(tag):
+    # Escolhe 1 produto aleatório
+    produto = random.choice(produtos)
 
-    dados = resp.json()
-    resultados = []
+    # Adiciona o ID de afiliado ao link
+    produto["link"] = produto["link"].replace("{TAG}", tag)
 
-    for item in dados.get("products", []):
-        for offer in item.get("offers", []):
-            loja = offer.get("source")
-            link = offer.get("offer_url")
-
-            # filtrar ofertas da Amazon
-            if loja and "amazon" in loja.lower():
-                # adicionar link de afiliado
-                link_afiliado = f"{link}?tag={afiliado_id}"
-
-                resultados.append({
-                    "nome": item.get("product_name"),
-                    "preco": offer.get("price"),
-                    "loja": loja,
-                    "link": link_afiliado,
-                    "imagem": item.get("product_images", [None])[0]
-                })
-
-    return resultados
+    return produto
