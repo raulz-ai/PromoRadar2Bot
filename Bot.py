@@ -1,18 +1,25 @@
-import requests
-import time
 import os
+import time
+import requests
 
-BOT_TOKEN = os.getenv("8304046291:AAE5obF01ZOo3Us6-bgatwbDBL5GJR8R4dE")
-CHAT_ID = os.getenv("-1003394805895")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
 
-def enviar(texto):
-    url = f"https://api.telegram.org/bot{8304046291:AAE5obF01ZOo3Us6-bgatwbDBL5GJR8R4dE}/sendMessage"
-    data = {"chat_id": CHAT_ID, "text": texto, "parse_mode": "HTML"}
+def enviar(msg):
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    data = {
+        "chat_id": CHAT_ID,
+        "text": msg,
+        "parse_mode": "HTML"
+    }
     requests.post(url, data=data)
 
 def main():
+    enviar("🚀 PromoRadar2Bot iniciou com sucesso!")
     while True:
-        enviar("Bot está funcionando! 🔥")
+        # manda só uma mensagem de teste por enquanto
+        enviar("🔥 Bot rodando no Render!")
         time.sleep(60)
 
-main()
+if __name__ == "__main__":
+    main()
