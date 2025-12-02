@@ -1,22 +1,21 @@
-import logging
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
-from amazon_ofertas import buscar_ofertas
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+import requests
+from amazon_ofertas import buscar_ofertas
 
 TOKEN = "8304046291:AAE5obF01ZOo3Us6-bgatwbDBL5GJR8R4dE"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Bot de ofertas iniciado!")
+    await update.message.reply_text("Bot iniciado com sucesso!")
 
 async def ofertas(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    ofertas_texto = buscar_ofertas()
-    await update.message.reply_text(ofertas_texto)
+    texto = buscar_ofertas()
+    await update.message.reply_text(texto)
 
 def main():
     app = ApplicationBuilder().token(TOKEN).build()
+
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("ofertas", ofertas))
 
