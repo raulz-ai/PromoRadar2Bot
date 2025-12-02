@@ -1,24 +1,26 @@
-import os
-from telegram import Bot
-from amazon_ofertas import buscar_ofertas_amazon
+import logging
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+from amazon_ofertas import buscar_ofertas
 
-TOKEN = os.getenv("BOT_TOKEN")
-CHAT_ID = os.getenv("CHAT_ID")
-AMAZON_TAG = os.getenv("AMAZON_TAG")
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-bot = Bot(TOKEN)
+TOKEN = "8304046291:AAE5obF01ZOo3Us6-bgatwbDBL5GJR8R4dE"
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Bot de ofertas iniciado!")
+
+async def ofertas(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    ofertas_texto = buscar_ofertas()
+    await update.message.reply_text(ofertas_texto)
 
 def main():
-    oferta = buscar_ofertas_amazon(AMAZON_TAG)
+    app = ApplicationBuilder().token(TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("ofertas", ofertas))
 
-    mensagem = (
-        f"🔥 *Oferta do dia!*\n\n"
-        f"📱 *{oferta['nome']}*\n"
-        f"💸 Preço: R${oferta['preco']}\n\n"
-        f"👉 Link: {oferta['link']}"
-    )
-
-    bot.send_message(CHAT_ID, mensagem, parse_mode="Markdown")
+    app.run_polling()
 
 if __name__ == "__main__":
     main()
