@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-AFFILIATE_TAG = "raulz07-20"  # <-- seu link de afiliado aqui
+AFFILIATE_TAG = "promoradar0cb-20"  # seu link de afiliado da Amazon
 
 def buscar_ofertas():
     url = "https://www.amazon.com.br/gp/goldbox"
@@ -18,7 +18,7 @@ def buscar_ofertas():
 
     soup = BeautifulSoup(r.text, "html.parser")
 
-    # Cards de ofertas
+    # Seleção dos cards reais da página da Amazon
     cards = soup.select("div.DealCard-module__dealCard_1H0Lh")
 
     if not cards:
@@ -28,19 +28,4 @@ def buscar_ofertas():
 
     for card in cards[:5]:
         titulo = card.select_one("span.DealCard-module__truncate_3v4MM")
-        link = card.find("a", href=True)
-
-        if not titulo or not link:
-            continue
-
-        nome = titulo.get_text(strip=True)
-        url_prod = "https://www.amazon.com.br" + link["href"]
-
-        # adiciona tag de afiliado automaticamente
-        if "tag=" not in url_prod:
-            separador = "&" if "?" in url_prod else "?"
-            url_prod += f"{separador}tag={AFFILIATE_TAG}"
-
-        texto += f"• {nome}\n{url_prod}\n\n"
-
-    return texto
+        link = card.find("a", href=True
